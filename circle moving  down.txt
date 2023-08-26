@@ -1,0 +1,115 @@
+
+
+app.js
+///////
+
+import { useState } from 'react';
+
+let initialShapes = [
+  { id: 0, type: 'circle', x: 50, y: 100 },
+  { id: 1, type: 'square', x: 150, y: 100 },
+  { id: 2, type: 'circle', x: 250, y: 100 },
+];
+
+export default function ShapeEditor() {
+  const [shapes, setShapes] = useState(
+    initialShapes
+  );
+
+  function handleClick() {
+    const nextShapes = shapes.map(shape => {
+      if (shape.type === 'square') {
+        // No change
+        return shape;
+      } else {
+        // Return a new circle 50px below
+        return {
+          ...shape,
+          y: shape.y + 50,
+        };
+      }
+    });
+    // Re-render with the new array
+    setShapes(nextShapes);
+  }
+
+  return (
+    <>
+      <button onClick={handleClick}>
+        Move circles down!
+      </button>
+      {shapes.map(shape => (
+        <div
+          key={shape.id}
+          style={{
+          background: 'purple',
+          position: 'absolute',
+          left: shape.x,
+          top: shape.y,
+          borderRadius:
+            shape.type === 'circle'
+              ? '50%' : '',
+          width: 20,
+          height: 20,
+        }} />
+      ))}
+    </>
+  );
+}
+
+
+///////style.css///
+
+* {
+  box-sizing: border-box;
+  background: linear-gradient(135deg, #f2eff7, #c2e4f8);
+}
+
+body {
+  font-family: sans-serif;
+  margin: 20px;
+  padding: 0;
+}
+
+h1 {
+  margin-top: 0;
+  font-size: 22px;
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 20px;
+}
+
+h3 {
+  margin-top: 0;
+  font-size: 18px;
+}
+
+h4 {
+  margin-top: 0;
+  font-size: 16px;
+}
+
+h5 {
+  margin-top: 0;
+  font-size: 14px;
+}
+
+h6 {
+  margin-top: 0;
+  font-size: 12px;
+}
+
+code {
+  font-size: 1.2em;
+}
+
+ul {
+  padding-inline-start: 20px;
+}
+
+
+
+button { margin-left: 5px; }
+

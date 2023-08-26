@@ -1,0 +1,221 @@
+app.cs
+///////
+
+
+import { useState } from 'react';
+import { useImmer } from 'use-immer';
+import AddTodo from './AddTodo.js';
+import TaskList from './TaskList.js';
+
+let nextId = 3;
+const initialTodos = [
+  { id: 0, title: 'Buy milk', done: true },
+  { id: 1, title: 'Eat tacos', done: true},
+  { id: 2, title: 'Brew tea', done: true },
+];
+
+export default function TaskApp() {
+  const [todos, setTodos] = useState(
+    initialTodos
+  );
+
+  function handleAddTodo(title) {
+    todos.push({
+      id: nextId++,
+      title: title,
+      done: false
+    });
+  }
+
+  function handleChangeTodo(nextTodo) {
+    const todo = todos.find(t =>
+      t.id === nextTodo.id
+    );
+    todo.title = nextTodo.title;
+    todo.done = nextTodo.done;
+  }
+
+  function handleDeleteTodo(todoId) {
+    const index = todos.findIndex(t =>
+      t.id === todoId
+    );
+    todos.splice(index, 1);
+  }
+
+  return (
+    <>
+      <AddTodo
+        onAddTodo={handleAddTodo}
+      />
+      <TaskList
+        todos={todos}
+        onChangeTodo={handleChangeTodo}
+        onDeleteTodo={handleDeleteTodo}
+      />
+    </>
+  );
+}
+
+style.css
+////////
+
+
+* {
+  box-sizing: border-box;
+  background: linear-gradient(135deg, #e5f13a, #ddf123);
+}
+
+body {
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  font-family: sans-serif;
+  margin: 20px;
+  padding: 0;
+}
+
+h1 {
+  margin-top: 0;
+  font-size: 22px;
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 20px;
+}
+
+h3 {
+  margin-top: 0;
+  font-size: 18px;
+}
+
+h4 {
+  margin-top: 0;
+  font-size: 16px;
+}
+
+h5 {
+  margin-top: 0;
+  font-size: 14px;
+}
+
+h6 {
+  margin-top: 0;
+  font-size: 12px;
+}
+
+code {
+  font-size: 1.2em;
+}
+
+ul {
+  padding-inline-start: 20px;
+}
+
+
+
+button { margin: 5px; }
+li { list-style-type: none;}
+ul, li { margin: 0; padding: 0;}
+
+
+
+tasklist.js
+//////////
+
+
+import { useState } from 'react';
+
+export default function TaskList({
+  todos,
+  onChangeTodo,
+  onDeleteTodo
+}) {
+  return (
+    <ul>
+      {todos.map(todo => (
+        <li key={todo.id}>
+          <Task
+            todo={todo}
+            onChange={onChangeTodo}
+            onDelete={onDeleteTodo}
+          />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function Task({ todo, onChange, onDelete }) {
+  const [isEditing, setIsEditing] = useState(false);
+  let todoContent;
+  if (isEditing) {
+    todoContent = (
+      <>
+        <input
+          value={todo.title}
+          onChange={e => {
+            onChange({
+              ...todo,
+              title: e.target.value
+            });
+          }} />
+        <button onClick={() => setIsEditing(false)}>
+          Save
+        </button>
+      </>
+    );
+  } else {
+    todoContent = (
+      <>
+        {todo.title}
+        <button onClick={() => setIsEditing(true)}>
+          Edit
+        </button>
+      </>
+    );
+  }
+  return (
+    <label>
+      <input
+        type="checkbox"
+        checked={todo.done}
+        onChange={e => {
+          onChange({
+            ...todo,
+            done: e.target.checked
+          });
+        }}
+      />
+      {todoContent}
+      <button onClick={() => onDelete(todo.id)}>
+        Delete
+      </button>
+    </label>
+  );
+}
+
+
+
+apptodo.js
+//////////
+
+import { useState } from 'react';
+
+export default function AddTodo({ onAddTodo }) {
+  const [title, setTitle] = useState('');
+  return (
+    <>
+      <input
+        placeholder="Add todo"
+        value={title}
+        onChange={e => setTitle(e.target.value)}
+      />
+      <button onClick={() => {
+        setTitle('');
+        onAddTodo(title);
+      }}>Add</button>
+    </>
+  )
+}
+
